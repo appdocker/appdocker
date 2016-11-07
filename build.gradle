@@ -5,7 +5,9 @@ buildscript {
     repositories {
         // maven{ url 'http://maven.oschina.net/content/groups/public/'}
 
-        jcenter()
+        // jcenter()
+
+        maven { url 'http://123.59.149.203:8081/repository/maven-central/' }
     }
     dependencies {
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
@@ -27,7 +29,9 @@ subprojects {
     sourceCompatibility = 1.8
 
     repositories {
-        jcenter()
+        // jcenter()
+
+        maven { url 'http://123.59.149.203:8081/repository/maven-central/' }
     }
 
     jar {

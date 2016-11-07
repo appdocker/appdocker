@@ -11,6 +11,7 @@ import io.vertx.core.spi.cluster.ClusterManager;
 import io.vertx.spi.cluster.hazelcast.HazelcastClusterManager;
 import javassist.NotFoundException;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.nio.file.Files;
@@ -40,7 +41,7 @@ public final class Application {
                 throw new NotFoundException("not found valid appdocker.json file in classpath");
             }
 
-            configPath = url.getPath();
+            configPath = new File(url.getFile()).getCanonicalPath();
         }
 
         return new JsonObject(readFile(configPath));
