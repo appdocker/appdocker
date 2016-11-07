@@ -75,6 +75,8 @@ subprojects {
 
         compile "io.vertx:vertx-service-proxy:$vertx_version"
 
+        compile "io.vertx:vertx-codegen:$vertx_version"
+
         compile "com.esotericsoftware:reflectasm:1.11.3"
 
         compile "org.neo4j.driver:neo4j-java-driver:1.0.6"
@@ -83,7 +85,37 @@ subprojects {
 
         testCompile "junit:junit:4.12"
     }
+
+    task generateProxies(type: JavaCompile, group: 'build',
+            description: 'Generates the Vertx proxies') {
+        source = sourceSets.main.java // input source set
+        classpath = configurations.compile //+ configurations.vertx // add processor module to classpath
+        // specify javac arguments
+        options.compilerArgs = [
+                "-proc:only",
+                "-processor", "io.vertx.codegen.CodeGenProcessor", // vertx processor here
+                "-AoutputDirectory=${projectDir}/src/main"
+        ]
+        // specify output of generated code
+        destinationDir = file("${projectDir}/src/main/generated")
+    }
+
     sourceSets {
         main.java.srcDirs += 'src/main/kotlin'
+
+        main.java.srcDirs += 'src/main/generated'
+
+        generated {
+            java.srcDir "${projectDir}/src/main/generated"
+        }
+    }
+
+    compileJava{
+        dependsOn(generateProxies)
+        source    += sourceSets.generated.java
+        // specify javac arguments
+        options.compilerArgs = [
+                "-Acodetrans.output=${projectDir}/src/main"
+        ]
     }
 }
