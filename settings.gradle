@@ -1,2 +1,2 @@
-include  'haohelper-iop-api', 'haohelper-iop','haohelper-app'
+include  'iop-api', 'iop','app'
 

@@ -14,9 +14,9 @@
 * under the License.
 */
 
-package com.haohelper.iop;
+package com.appdocker.iop;
 
-import com.haohelper.iop.InternetOfPeopleService;
+import com.appdocker.iop.InternetOfPeopleService;
 import io.vertx.core.Vertx;
 import io.vertx.core.Handler;
 import io.vertx.core.AsyncResult;
@@ -39,6 +39,8 @@ import io.vertx.serviceproxy.ProxyHelper;
 import io.vertx.serviceproxy.ProxyHandler;
 import io.vertx.serviceproxy.ServiceException;
 import io.vertx.serviceproxy.ServiceExceptionMessageCodec;
+import com.appdocker.iop.InternetOfPeopleService;
+import io.vertx.core.Vertx;
 import io.vertx.core.AsyncResult;
 import io.vertx.core.Handler;
 
@@ -120,6 +122,7 @@ public class InternetOfPeopleServiceVertxProxyHandler extends ProxyHandler {
       }
       accessed();
       switch (action) {
+
         case "hello": {
           service.hello((java.lang.String)json.getValue("message"), createHandler(msg));
           break;

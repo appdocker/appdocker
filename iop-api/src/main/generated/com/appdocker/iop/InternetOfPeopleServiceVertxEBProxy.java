@@ -14,9 +14,9 @@
 * under the License.
 */
 
-package com.haohelper.iop;
+package com.appdocker.iop;
 
-import com.haohelper.iop.InternetOfPeopleService;
+import com.appdocker.iop.InternetOfPeopleService;
 import io.vertx.core.eventbus.DeliveryOptions;
 import io.vertx.core.Vertx;
 import io.vertx.core.Future;
@@ -32,6 +32,8 @@ import java.util.function.Function;
 import io.vertx.serviceproxy.ProxyHelper;
 import io.vertx.serviceproxy.ServiceException;
 import io.vertx.serviceproxy.ServiceExceptionMessageCodec;
+import com.appdocker.iop.InternetOfPeopleService;
+import io.vertx.core.Vertx;
 import io.vertx.core.AsyncResult;
 import io.vertx.core.Handler;
 

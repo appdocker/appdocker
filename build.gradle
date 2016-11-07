@@ -5,9 +5,7 @@ buildscript {
     repositories {
         // maven{ url 'http://maven.oschina.net/content/groups/public/'}
 
-//        jcenter()
-
-        maven{ url 'http://123.59.149.203:8081/repository/maven-central/'}
+        jcenter()
     }
     dependencies {
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
@@ -16,7 +14,7 @@ buildscript {
 
 
 subprojects {
-    group 'com.haohelper'
+    group 'com.appdocker'
 
     version '1.0-SNAPSHOT'
 
@@ -29,7 +27,6 @@ subprojects {
     sourceCompatibility = 1.8
 
     repositories {
-        maven{ url 'http://123.59.149.203:8081/repository/maven-central/'}
         jcenter()
     }
 
