@@ -1,0 +1,118 @@
+buildscript {
+
+    ext.kotlin_version = '1.0.4'
+
+    repositories {
+        // maven{ url 'http://maven.oschina.net/content/groups/public/'}
+
+        jcenter()
+    }
+    dependencies {
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+    }
+}
+
+
+subprojects {
+    group 'com.appdocker'
+
+    version '1.0-SNAPSHOT'
+
+
+    apply plugin: 'java'
+    apply plugin: 'kotlin'
+    apply plugin: 'maven'
+
+    targetCompatibility = 1.8
+    sourceCompatibility = 1.8
+
+    repositories {
+        jcenter()
+    }
+
+    jar {
+        from sourceSets.main.allSource
+    }
+
+    ext.kotlin_version = '1.0.3'
+    ext.vertx_version = '3.3.3'
+
+    dependencies {
+        compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+
+        compile "io.vertx:vertx-core:$vertx_version"
+
+        compile "io.vertx:vertx-web:$vertx_version"
+
+        compile "io.vertx:vertx-service-factory:$vertx_version"
+
+        compile "io.vertx:vertx-web-templ-mvel:$vertx_version"
+
+        compile "io.vertx:vertx-web-templ-jade:$vertx_version"
+
+        compile "io.vertx:vertx-web-templ-handlebars:$vertx_version"
+
+        compile "io.vertx:vertx-web-templ-thymeleaf:$vertx_version"
+
+        compile "io.vertx:vertx-auth-jdbc:$vertx_version"
+
+        compile "io.vertx:vertx-auth-jwt:$vertx_version"
+
+        compile "io.vertx:vertx-auth-oauth2:$vertx_version"
+
+        compile "io.vertx:vertx-auth-shiro:$vertx_version"
+
+        compile "io.vertx:vertx-auth-mongo:$vertx_version"
+
+        compile "io.vertx:vertx-auth-common:$vertx_version"
+
+        compile "io.vertx:vertx-service-discovery:$vertx_version"
+
+        compile "io.vertx:vertx-hazelcast:$vertx_version"
+
+        compile "io.vertx:vertx-service-proxy:$vertx_version"
+
+        compile "io.vertx:vertx-codegen:$vertx_version"
+
+        compile "com.esotericsoftware:reflectasm:1.11.3"
+
+        compile "org.neo4j.driver:neo4j-java-driver:1.0.6"
+
+        testCompile "io.vertx:vertx-unit:$vertx_version"
+
+        testCompile "junit:junit:4.12"
+    }
+
+    task generateProxies(type: JavaCompile, group: 'build',
+            description: 'Generates the Vertx proxies') {
+        source = sourceSets.main.java // input source set
+        classpath = configurations.compile //+ configurations.vertx // add processor module to classpath
+        // specify javac arguments
+        options.compilerArgs = [
+                "-proc:only",
+                "-processor", "io.vertx.codegen.CodeGenProcessor", // vertx processor here
+                "-AoutputDirectory=${projectDir}/src/main"
+        ]
+        // specify output of generated code
+        destinationDir = file("${projectDir}/src/main/generated")
+    }
+
+    sourceSets {
+        main.java.srcDirs += 'src/main/kotlin'
+
+        main.java.srcDirs += 'src/main/generated'
+
+        generated {
+            java.srcDir "${projectDir}/src/main/generated"
+        }
+    }
+
+    compileJava{
+        dependsOn(generateProxies)
+        source    += sourceSets.generated.java
+        // specify javac arguments
+        options.compilerArgs = [
+                "-Acodetrans.output=${projectDir}/src/main"
+        ]
+    }
+}
