@@ -1,6 +1,7 @@
 package com.appdocker.vertx;
 
 
+import io.vertx.core.DeploymentOptions;
 import io.vertx.core.Vertx;
 import io.vertx.core.VertxOptions;
 import io.vertx.core.json.JsonArray;
@@ -60,7 +61,21 @@ public final class Application {
 
                     JsonObject config = loadConfig();
 
-                    loadService(config.getJsonArray("services"),0);
+                    DeploymentOptions deploymentOptions = new DeploymentOptions();
+
+                    deploymentOptions.setConfig(config.getJsonObject("service-discovery"));
+
+                    ServiceDiscoveryVerticle verticle = new ServiceDiscoveryVerticle();
+
+                    vertx.deployVerticle(verticle,deploymentOptions,result -> {
+                        if(result.succeeded()) {
+                            logger.info("load service:{0} -- succeeded","ServiceDiscoveryVerticle");
+                        } else {
+                            logger.error("load service:{0} -- failed","ServiceDiscoveryVerticle",result.cause());
+
+                            System.exit(1);
+                        }
+                    });
 
                 } catch (Exception e) {
                     logger.error("load appdocker services error",e);
@@ -89,7 +104,7 @@ public final class Application {
 
         vertx.deployVerticle("service:" + services.getString(index), result -> {
             if(result.succeeded()) {
-                logger.info("load service:{0} -- succeeded");
+                logger.info("load service:{0} -- succeeded", services.getString(index));
             } else {
                 logger.error("load service:{0} -- failed", services.getString(index),result.cause());
 
@@ -101,6 +116,9 @@ public final class Application {
     }
 
     public static void main(String[] args) throws IOException, NotFoundException {
+
+        System.setProperty("vertx.logger-delegate-factory-class-name","io.vertx.core.logging.SLF4JLogDelegateFactory");
+
         new Application();
     }
 }
