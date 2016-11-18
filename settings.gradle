@@ -1,2 +1,2 @@
-include  'appdocker'
+include  'appdocker', 'appdocker-samples'
 

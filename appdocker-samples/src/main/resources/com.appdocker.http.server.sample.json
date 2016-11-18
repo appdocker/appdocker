@@ -1,0 +1,19 @@
+{
+  "main": "com.appdocker.http.HttpServerVerticle",
+  "options": {
+
+    "config" : {
+
+      "controllers": [
+        "com.appdocker.sample.API",
+        "com.appdocker.sample.static"
+      ],
+
+      "port":8080,
+
+      "cookie":true,
+
+      "error.template":"webroot/appdocker-sample-error.html"
+    }
+  }
+}

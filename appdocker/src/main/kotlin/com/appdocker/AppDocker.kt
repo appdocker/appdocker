@@ -3,6 +3,7 @@ package com.appdocker
 import io.vertx.core.DeploymentOptions
 import io.vertx.core.Vertx
 import io.vertx.core.VertxOptions
+import io.vertx.core.json.JsonArray
 import io.vertx.core.json.JsonObject
 import io.vertx.core.logging.LoggerFactory
 import io.vertx.spi.cluster.hazelcast.HazelcastClusterManager
@@ -13,6 +14,20 @@ class AppDocker {
     private val logger = LoggerFactory.getLogger(AppDocker::class.java)
 
     private var vertx:Vertx? = null
+
+    companion object {
+        @JvmStatic  fun main(args: Array<String>) {
+
+            if (System.getProperty("vertx.logger-delegate-factory-class-name") == null) {
+                System.setProperty("vertx.logger-delegate-factory-class-name","io.vertx.core.logging.SLF4JLogDelegateFactory")
+                System.setProperty("hazelcast.logging.type","slf4j")
+
+                System.setProperty("java.net.preferIPv4Stack","true")
+            }
+
+            AppDocker()
+        }
+    }
 
     init {
 
@@ -36,6 +51,7 @@ class AppDocker {
 
                         if (result.succeeded()) {
                             logger.info("load service discovery verticle success")
+                            loadService(config?.getJsonArray("services"),0)
                         } else {
                             logger.error("load service discovery verticle -- failed", result.cause())
 
@@ -44,6 +60,8 @@ class AppDocker {
 
                     })
 
+
+
                 } catch (e: Exception) {
                     logger.error("load service discovery verticle -- failed", e)
 
@@ -51,6 +69,30 @@ class AppDocker {
                 }
             }
         })
+    }
+
+    private fun loadService(services: JsonArray?, index:Int) {
+
+        if (services == null) return
+
+        if(services.size() == index) return
+
+        val name = services.getString(index)?:return
+
+        logger.info("loading service:$name")
+
+        vertx?.deployVerticle("service:$name") {
+            result ->
+
+            if(result.succeeded()) {
+                logger.info("load service:$name -- succeeded")
+            } else {
+                logger.info("load service:$name -- failed\n${result.causeWithStackTrace()}")
+                System.exit(1)
+            }
+
+            loadService(services,index + 1)
+        }
     }
 
     private fun loadConfig() : JsonObject? {
@@ -64,7 +106,7 @@ class AppDocker {
         } else {
             val classLoader = Thread.currentThread().contextClassLoader
 
-            val url = classLoader.getResource("iris.json")
+            val url = classLoader.getResource("appdocker.json")
 
             if(url != null) {
                 config = JsonObject(File(url.toURI()).readText())

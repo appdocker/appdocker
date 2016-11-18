@@ -1,0 +1,9 @@
+{
+  "main": "com.appdocker.samples.SampleAPI",
+  "options": {
+    "config" : {
+      "path":"/api",
+      "order":1
+    }
+  }
+}

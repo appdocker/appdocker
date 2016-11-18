@@ -1,6 +1,6 @@
 buildscript {
 
-    ext.kotlin_version = '1.0.4'
+    ext.kotlin_version = '1.0.5-2'
 
     repositories {
         // maven{ url 'http://maven.oschina.net/content/groups/public/'}
@@ -38,7 +38,7 @@ subprojects {
         from sourceSets.main.allSource
     }
 
-    ext.kotlin_version = '1.0.3'
+    ext.kotlin_version = '1.0.5-2'
     ext.vertx_version = '3.3.3'
 
     dependencies {
@@ -72,7 +72,13 @@ subprojects {
 
         compile "io.vertx:vertx-service-discovery:$vertx_version"
 
-        compile "io.vertx:vertx-hazelcast:$vertx_version"
+        compile ("io.vertx:vertx-hazelcast:$vertx_version") {
+            exclude group: 'com.hazelcast', module: 'hazelcast'
+        }
+
+        compile "com.hazelcast:hazelcast:3.7.3"
+
+//        compile "io.vertx:vertx-ignite:$vertx_version"
 
         compile "io.vertx:vertx-service-proxy:$vertx_version"
 
@@ -88,7 +94,7 @@ subprojects {
         // https://mvnrepository.com/artifact/org.slf4j/slf4j-api
         compile group: 'org.slf4j', name: 'slf4j-api', version: '1.7.21'
 
-
+        compile "com.esotericsoftware:reflectasm:1.11.3"
 
         testCompile "io.vertx:vertx-unit:$vertx_version"
 
@@ -108,18 +114,18 @@ subprojects {
         destinationDir = file("${projectDir}/src/main/generated")
     }
 
-    task generateTestProxies(type: JavaCompile, group: 'build', description: 'Generates the Vertx proxies') {
-        source = sourceSets.test.java // input source set
-        classpath = configurations.compile //+ configurations.vertx // add processor module to classpath
-        // specify javac arguments
-        options.compilerArgs = [
-                "-proc:only",
-                "-processor", "io.vertx.codegen.CodeGenProcessor", // vertx processor here
-                "-AoutputDirectory=${projectDir}/src/test"
-        ]
-        // specify output of generated code
-        destinationDir = file("${projectDir}/src/test/generated")
-    }
+//    task generateTestProxies(type: JavaCompile, group: 'build', description: 'Generates the Vertx proxies') {
+//        source = sourceSets.test.java // input source set
+//        classpath = configurations.testCompile + configurations.compile // add processor module to classpath
+//        // specify javac arguments
+//        options.compilerArgs = [
+//                "-proc:only",
+//                "-processor", "io.vertx.codegen.CodeGenProcessor", // vertx processor here
+//                "-AoutputDirectory=${projectDir}/src/test"
+//        ]
+//        // specify output of generated code
+//        destinationDir = file("${projectDir}/src/test/generated")
+//    }
 
     sourceSets {
         main.java.srcDirs += 'src/main/kotlin'
@@ -146,13 +152,13 @@ subprojects {
         ]
     }
 
-    compileTestJava {
-        dependsOn generateTestProxies
-
-        source    += sourceSets.testgenerated.java
-        // specify javac arguments
-        options.compilerArgs = [
-                "-Acodetrans.output=${projectDir}/src/test"
-        ]
-    }
+//    compileTestJava {
+//        dependsOn generateTestProxies
+//
+//        source    += sourceSets.testgenerated.java
+//        // specify javac arguments
+//        options.compilerArgs = [
+//                "-Acodetrans.output=${projectDir}/src/test"
+//        ]
+//    }
 }

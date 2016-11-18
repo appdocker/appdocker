@@ -1,0 +1,17 @@
+{
+  "service-discovery": {
+    "export" : [
+      {
+        "name"    : "com.appdocker.samples.EchoService",
+        "address" : "samples:com.appdocker.samples.EchoService",
+        "service" : "com.appdocker.samples.EchoService",
+        "impl"    : "com.appdocker.samples.EchoServiceImpl",
+        "metadata": {}
+      }
+    ]
+  },
+
+  "services" : [
+    "com.appdocker.http.server.sample"
+  ]
+}

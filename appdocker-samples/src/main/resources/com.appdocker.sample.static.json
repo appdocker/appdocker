@@ -1,0 +1,13 @@
+{
+  "main": "com.appdocker.http.controller.StaticResourceController",
+  "options": {
+    "config" : {
+      "order":2,
+      "paths": [
+        "/*"
+      ],
+
+      "webroot":"webroot"
+    }
+  }
+}
