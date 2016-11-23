@@ -1,4 +1,4 @@
-package com.appdocker.http.annotations
+package com.appdocker.web.annotations
 
 import io.vertx.core.http.HttpMethod
 
@@ -7,4 +7,4 @@ import io.vertx.core.http.HttpMethod
  */
 @Target(AnnotationTarget.FUNCTION)
 @Retention(AnnotationRetention.RUNTIME)
-annotation class Method(vararg val allowedMethods:HttpMethod)
+annotation class Method(vararg val allowedMethods: HttpMethod)

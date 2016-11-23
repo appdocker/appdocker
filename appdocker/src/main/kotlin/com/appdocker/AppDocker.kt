@@ -16,6 +16,8 @@ class AppDocker {
     private var vertx:Vertx? = null
 
     companion object {
+
+
         @JvmStatic  fun main(args: Array<String>) {
 
             if (System.getProperty("vertx.logger-delegate-factory-class-name") == null) {

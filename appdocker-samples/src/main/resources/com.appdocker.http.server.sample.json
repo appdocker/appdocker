@@ -1,11 +1,12 @@
 {
-  "main": "com.appdocker.http.HttpServerVerticle",
+  "main": "com.appdocker.web.HttpServerVerticle",
   "options": {
 
     "config" : {
 
       "controllers": [
         "com.appdocker.sample.API",
+        "com.appdocker.sample.API2",
         "com.appdocker.sample.static"
       ],
 
@@ -13,7 +14,34 @@
 
       "cookie":true,
 
-      "error.template":"webroot/appdocker-sample-error.html"
+      "error.template":"webroot/appdocker-sample-error.html",
+
+      "error.handlers" : [
+        {
+          "main" : "com.appdocker.web.handler.APIErrorHandler",
+
+          "path" : "/api2/*",
+
+          "config" : {
+
+            "template" : {
+              "error" : "{errorCode}",
+              "message" : "{errorMessage}"
+            }
+          }
+        },
+
+        {
+          "main" : "com.appdocker.web.handler.HTMLErrorHandler",
+
+          "path" : "/*",
+
+          "config" : {
+
+            "template" : "webroot/appdocker-sample-error.html"
+          }
+        }
+      ]
     }
   }
 }

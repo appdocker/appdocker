@@ -6,16 +6,16 @@
             margin: 0;
             padding: 80px 100px;
             font: 13px "Helvetica Neue", "Lucida Grande", "Arial";
-            background: #0d050f -webkit-gradient(linear, 0% 0%, 0% 100%, from(#ff1109), to(#ece9e9));
+            background: #0d050f -webkit-gradient(linear, 0% 0%, 0% 100%, from(#fffbfd), to(#ece9e9));
             background: #eccd69 -moz-linear-gradient(top, #ffb15c, #0d050f);
             background-repeat: no-repeat;
-            color: #ece9e9;
+            color: #202020;
             -webkit-font-smoothing: antialiased;
         }
         h1, h2, h3 {
             margin: 0;
             font-size: 22px;
-            color: #ece9e9;
+            color: #340f17;
         }
         h1 em, h2 em {
             padding: 0 5px;
@@ -68,7 +68,7 @@
 <body>
 <div id="wrapper">
     <h1>@{context.get("hello")}</h1>
-    <h2><em>@{context.request().path()}</em> {errorMessage}</h2>
+    <h2><em>@{context.request().path()}</em></h2>
     <ul id="stacktrace">@{context.session()}</ul>
 </div>
 </body>

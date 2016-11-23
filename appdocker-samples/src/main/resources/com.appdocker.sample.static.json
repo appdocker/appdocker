@@ -1,5 +1,5 @@
 {
-  "main": "com.appdocker.http.controller.StaticResourceController",
+  "main": "com.appdocker.web.controller.StaticResourceController",
   "options": {
     "config" : {
       "order":2,

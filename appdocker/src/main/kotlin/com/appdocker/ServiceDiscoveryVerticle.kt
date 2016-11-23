@@ -5,6 +5,7 @@ import io.vertx.core.json.JsonObject
 import io.vertx.core.logging.LoggerFactory
 import io.vertx.servicediscovery.Record
 import io.vertx.servicediscovery.ServiceDiscovery
+import io.vertx.servicediscovery.ServiceDiscoveryOptions
 import io.vertx.servicediscovery.types.EventBusService
 import io.vertx.serviceproxy.ProxyHelper
 import java.util.concurrent.ConcurrentHashMap
@@ -24,10 +25,19 @@ class ServiceDiscoveryVerticle:AbstractVerticle() {
 
     override fun start() {
 
-        discovery = ServiceDiscovery.create(vertx)
+        val options = ServiceDiscoveryOptions()
+
+        options.backendConfiguration =
+                JsonObject()
+                        .put("host","127.0.0.1")
+                        .put("key","records")
+
+        discovery = ServiceDiscovery.create(vertx, options)
 
         // start service discovery
         exportService()
+
+        AppDockerContext.sharedMap.put(appdockerServiceDiscovery, discovery!!)
     }
 
     private fun exportService() {
@@ -39,8 +49,8 @@ class ServiceDiscoveryVerticle:AbstractVerticle() {
                 .forEach { export ->
 
                     val record = EventBusService.createRecord(
-                            export.getString("name"),
-                            export.getString("address"),
+                            "${export.getString("name")}@${vertx.hashCode()}" ,
+                            "${export.getString("address")}@${vertx.hashCode()}",
                             export.getString("service"),
                             export.getJsonObject("metadata"))
 
@@ -64,7 +74,11 @@ class ServiceDiscoveryVerticle:AbstractVerticle() {
                             val obj = implClass.newInstance()
 
                             @Suppress("UNCHECKED_CAST")
-                            ProxyHelper.registerService(Class.forName(export.getString("service")) as Class<Any>,vertx,obj,export.getString("address"))
+                            ProxyHelper.registerService(
+                                    Class.forName(export.getString("service")) as Class<Any>,
+                                    vertx,
+                                    obj,
+                                    "${export.getString("address")}@${vertx.hashCode()}")
 
                             logger.info("create event bus service -- success :\n\t{}",export)
                         } else {
