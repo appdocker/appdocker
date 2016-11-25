@@ -1,0 +1,8 @@
+{
+  "main": "com.appdocker.samples.SampleAPI2",
+  "options": {
+    "config" : {
+      "path":"/api2"
+    }
+  }
+}

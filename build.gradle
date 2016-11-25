@@ -29,7 +29,10 @@ subprojects {
     sourceCompatibility = 1.8
 
     repositories {
-         jcenter()
+
+        jcenter()
+
+        maven { url 'https://oss.jfrog.org/libs-snapshot' }
 
 //        maven { url 'http://120.24.56.214:8081/repository/maven-central/' }
     }
@@ -42,6 +45,9 @@ subprojects {
     ext.vertx_version = '3.3.3'
 
     dependencies {
+
+        compile 'io.reactivex:rxjava:1.2.2'
+
         compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
 
         compile "io.vertx:vertx-core:$vertx_version"
@@ -72,13 +78,15 @@ subprojects {
 
         compile "io.vertx:vertx-service-discovery:$vertx_version"
 
-        compile ("io.vertx:vertx-hazelcast:$vertx_version") {
-            exclude group: 'com.hazelcast', module: 'hazelcast'
-        }
+//        compile "io.vertx:vertx-service-discovery-backend-redis:$vertx_version"
 
-        compile "com.hazelcast:hazelcast:3.7.3"
+//        compile ("io.vertx:vertx-hazelcast:$vertx_version") {
+//            exclude group: 'com.hazelcast', module: 'hazelcast'
+//        }
+//
+//        compile "com.hazelcast:hazelcast:3.7.3"
 
-//        compile "io.vertx:vertx-ignite:$vertx_version"
+        compile "io.vertx:vertx-jgroups:$vertx_version"
 
         compile "io.vertx:vertx-service-proxy:$vertx_version"
 

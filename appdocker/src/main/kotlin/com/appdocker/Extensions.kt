@@ -1,8 +1,9 @@
 package com.appdocker
 
 import io.vertx.core.AsyncResult
+import io.vertx.core.Handler
 
-fun <T> AsyncResult<T>.causeWithStackTrace():String {
+public fun <T> AsyncResult<T>.causeWithStackTrace():String {
     val stream = StringBuilder()
 
     this.cause().stackTrace.forEach {
@@ -14,3 +15,11 @@ fun <T> AsyncResult<T>.causeWithStackTrace():String {
 
     return "${this.cause()}\n\t${stream.toString()}"
 }
+
+fun <T> Handler(handler: (T) -> Unit): Handler<T> = Handler<T> { event -> handler(event) }
+
+val appdockerServiceDiscovery = "__appdocker_service_discovery"
+
+val appdockerServiceTimestamp = "__appdocker_service_timestamp"
+
+val appdockerServiceLease = "__appdocker_service_lease"
