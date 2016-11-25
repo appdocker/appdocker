@@ -78,15 +78,15 @@ subprojects {
 
         compile "io.vertx:vertx-service-discovery:$vertx_version"
 
-        compile "io.vertx:vertx-service-discovery-backend-redis:$vertx_version"
+//        compile "io.vertx:vertx-service-discovery-backend-redis:$vertx_version"
 
-        compile ("io.vertx:vertx-hazelcast:$vertx_version") {
-            exclude group: 'com.hazelcast', module: 'hazelcast'
-        }
+//        compile ("io.vertx:vertx-hazelcast:$vertx_version") {
+//            exclude group: 'com.hazelcast', module: 'hazelcast'
+//        }
+//
+//        compile "com.hazelcast:hazelcast:3.7.3"
 
-        compile "com.hazelcast:hazelcast:3.7.3"
-
-//        compile "io.vertx:vertx-ignite:$vertx_version"
+        compile "io.vertx:vertx-jgroups:$vertx_version"
 
         compile "io.vertx:vertx-service-proxy:$vertx_version"
 

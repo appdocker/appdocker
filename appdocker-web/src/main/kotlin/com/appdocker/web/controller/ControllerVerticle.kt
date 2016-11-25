@@ -146,17 +146,25 @@ open class ControllerVerticle : AbstractVerticle(){
 
                         ar ->
 
-                        logger.debug("prepare invoke $method -- success")
-
                         try {
+
                             if (ar.succeeded()) {
+                                logger.debug("prepare invoke $method -- success")
+
                                 access.invoke(this, method.name, context, *ar.result())
 
                             } else {
+                                logger.error("prepare invoke $method -- failed", ar.cause())
+
                                 // TODO: add formula error log
                                 throw ar.cause()
                             }
                         } catch (e:Throwable) {
+                            if (!ar.succeeded()) {
+                                context.fail(e)
+                                return@discovery
+                            }
+
                             ar.result().forEach loop@ {
                                 service ->
 
@@ -213,6 +221,7 @@ open class ControllerVerticle : AbstractVerticle(){
                         ar ->
 
                         if(ar.failed()) {
+                            logger.error("invoke discovery service error",ar.cause())
                             handler(Future.failedFuture(ar.cause()))
                         } else {
 
@@ -220,17 +229,14 @@ open class ControllerVerticle : AbstractVerticle(){
 
                                 r ->
 
-                                logger.debug("${r.status}")
-
                                 r.status == Status.UP
                             }
 
                             val services = java.lang.reflect.Array.newInstance(parameter.componentType,result.size)
 
                             result.forEachIndexed { i, record ->
-                                if (record.status == Status.UP) {
-                                    java.lang.reflect.Array.set(services, i, serviceDiscovery!!.getReference(record).get())
-                                }
+
+                                java.lang.reflect.Array.set(services, i, serviceDiscovery!!.getReference(record).get())
                             }
 
                             handler(Future.succeededFuture(services))
@@ -247,6 +253,7 @@ open class ControllerVerticle : AbstractVerticle(){
                         ar ->
 
                         if(ar.failed()) {
+                            logger.error("invoke discovery service error",ar.failed())
                             handler(Future.failedFuture(ar.cause()))
                         } else {
 

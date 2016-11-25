@@ -1,12 +1,14 @@
 package com.appdocker
 
+import com.appdocker.servicediscovery.ServiceDiscoveryVerticle
 import io.vertx.core.DeploymentOptions
 import io.vertx.core.Vertx
 import io.vertx.core.VertxOptions
 import io.vertx.core.json.JsonArray
 import io.vertx.core.json.JsonObject
 import io.vertx.core.logging.LoggerFactory
-import io.vertx.spi.cluster.hazelcast.HazelcastClusterManager
+import io.vertx.spi.cluster.jgroups.JGroupsClusterManager
+
 import java.io.File
 
 
@@ -33,7 +35,7 @@ class AppDocker {
 
     init {
 
-        val options = VertxOptions().setClusterManager(HazelcastClusterManager())
+        val options = VertxOptions().setClusterManager(JGroupsClusterManager())
 
         Vertx.clusteredVertx(options,{
             res ->

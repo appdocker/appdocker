@@ -1,9 +1,10 @@
 {
   "service-discovery": {
+    "timeout": 5000,
     "export" : [
       {
-        "name"    : "com.appdocker.samples.EchoService",
-        "address" : "samples:com.appdocker.samples.EchoService",
+        "name"    : "com.appdocker.samples.EchoService1",
+        "address" : "samples:com.appdocker.samples.EchoService1",
         "service" : "com.appdocker.samples.EchoService",
         "impl"    : "com.appdocker.samples.EchoServiceImpl",
         "metadata": {}

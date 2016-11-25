@@ -14,7 +14,7 @@ import io.vertx.ext.unit.junit.VertxUnitRunner;
 import io.vertx.servicediscovery.ServiceDiscovery;
 import io.vertx.servicediscovery.types.EventBusService;
 
-import io.vertx.spi.cluster.hazelcast.HazelcastClusterManager;
+import io.vertx.spi.cluster.jgroups.JGroupsClusterManager;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
@@ -44,7 +44,7 @@ public class EchoServiceTest {
 
         Async async = context.async();
 
-        Vertx.clusteredVertx(new VertxOptions().setClusterManager(new HazelcastClusterManager()), ar -> {
+        Vertx.clusteredVertx(new VertxOptions().setClusterManager(new JGroupsClusterManager()), ar -> {
             context.assertTrue(ar.succeeded());
 
             vertx = ar.result();

@@ -1,6 +1,7 @@
 package com.appdocker.samples;
 
 
+import com.appdocker.servicediscovery.ServiceDiscoveryHelper;
 import com.appdocker.web.annotations.Handler;
 import com.appdocker.web.annotations.Template;
 import com.appdocker.web.controller.ControllerVerticle;
@@ -8,8 +9,6 @@ import com.appdocker.web.handler.APIException;
 import io.vertx.core.logging.Logger;
 import io.vertx.core.logging.LoggerFactory;
 import io.vertx.ext.web.RoutingContext;
-import io.vertx.servicediscovery.ServiceDiscovery;
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import java.util.Objects;
 
@@ -20,13 +19,16 @@ public class SampleAPI2 extends ControllerVerticle {
     public void login(RoutingContext context, EchoService[] services) {
 
         for (EchoService service : services) {
+
+
             service.hello("hello" , ar -> {
 
                 Objects.requireNonNull(getServiceDiscovery());
 
-                ServiceDiscovery.releaseServiceObject(getServiceDiscovery(),service);
+                ServiceDiscoveryHelper.checkAndReleaseServiceObject(getServiceDiscovery(),service,ar.cause());
 
                 if(ar.failed()) {
+
                     logger.error("call service hello error",ar.cause());
 
                     return;
