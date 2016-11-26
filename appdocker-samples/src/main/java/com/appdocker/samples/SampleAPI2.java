@@ -4,7 +4,7 @@ package com.appdocker.samples;
 import com.appdocker.servicediscovery.ServiceDiscoveryHelper;
 import com.appdocker.web.annotations.Handler;
 import com.appdocker.web.annotations.Template;
-import com.appdocker.web.controller.ControllerVerticle;
+import com.appdocker.web.controller.AbstractController;
 import com.appdocker.web.handler.APIException;
 import io.vertx.core.logging.Logger;
 import io.vertx.core.logging.LoggerFactory;
@@ -12,7 +12,7 @@ import io.vertx.ext.web.RoutingContext;
 
 import java.util.Objects;
 
-public class SampleAPI2 extends ControllerVerticle {
+public class SampleAPI2 extends AbstractController {
     private static final Logger logger = LoggerFactory.getLogger(SampleAPI2.class);
     @Handler
     @Template("/login")

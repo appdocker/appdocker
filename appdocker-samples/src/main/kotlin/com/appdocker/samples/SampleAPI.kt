@@ -2,15 +2,15 @@ package com.appdocker.samples
 
 import com.appdocker.web.annotations.Handler
 import com.appdocker.web.annotations.Template
-import com.appdocker.web.controller.ControllerVerticle
+import com.appdocker.web.controller.AbstractController
 import io.vertx.ext.web.RoutingContext
 
-class SampleAPI: ControllerVerticle() {
+class SampleAPI: AbstractController() {
 
     @Handler
     @Template("/login")
     fun login(context : RoutingContext, echoServices: Array<EchoService>) {
-        context.put("hello","v1")
+        context.put("hello",echoServices)
         context.next()
     }
 

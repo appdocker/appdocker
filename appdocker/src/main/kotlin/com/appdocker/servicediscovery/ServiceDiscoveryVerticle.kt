@@ -1,9 +1,6 @@
 package com.appdocker.servicediscovery
 
-import com.appdocker.AppDockerContext
-import com.appdocker.appdockerServiceDiscovery
-import com.appdocker.appdockerServiceLease
-import com.appdocker.appdockerServiceTimestamp
+import com.appdocker.*
 import io.vertx.core.AbstractVerticle
 import io.vertx.core.json.JsonObject
 import io.vertx.core.logging.LoggerFactory
@@ -27,12 +24,16 @@ class ServiceDiscoveryVerticle: AbstractVerticle() {
 
     override fun start() {
 
-        discovery = ServiceDiscovery.create(vertx)
+        val options = ServiceDiscoveryOptions()
+
+        discovery = ServiceDiscovery.create(vertx,options)
 
         // start service discovery
         exportService()
 
-        AppDockerContext.sharedMap.put(appdockerServiceDiscovery, discovery!!)
+        val appdocker = vertx.sharedData().getLocalMap<String,JsonObject>(appdocker)
+
+        appdocker.put(appdockerConfig,config())
     }
 
     private fun exportService() {

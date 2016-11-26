@@ -3,7 +3,7 @@ package com.appdocker.web.controller
 import io.vertx.ext.web.handler.StaticHandler
 
 
-class StaticResourceController : ControllerVerticle() {
+class StaticResourceController : AbstractController() {
 
 
     override fun start() {

@@ -1,11 +1,14 @@
 package com.appdocker.web.controller
 
 import com.appdocker.AppDockerContext
+import com.appdocker.appdocker
 import com.appdocker.appdockerServiceDiscovery
 import com.appdocker.web.annotations.Handler
 import com.appdocker.web.annotations.Template
 import com.appdocker.web.appdockerHttpServerRouter
 import com.appdocker.web.appdockerHttpServerTemplate
+import com.appdocker.web.controller.spi.HandlerInterceptor
+import com.appdocker.web.controller.spi.TemplateHandlerInterceptor
 import com.esotericsoftware.reflectasm.MethodAccess
 import io.vertx.core.AbstractVerticle
 import io.vertx.core.AsyncResult
@@ -14,18 +17,21 @@ import io.vertx.core.http.HttpHeaders
 import io.vertx.core.json.JsonObject
 import io.vertx.core.logging.Logger
 import io.vertx.core.logging.LoggerFactory
+import io.vertx.ext.auth.AbstractUser
 import io.vertx.ext.web.Route
 import io.vertx.ext.web.Router
 import io.vertx.ext.web.RoutingContext
 import io.vertx.ext.web.templ.TemplateEngine
 import io.vertx.servicediscovery.ServiceDiscovery
+import io.vertx.servicediscovery.ServiceDiscoveryOptions
 import io.vertx.servicediscovery.Status
+import io.vertx.servicediscovery.spi.ServiceDiscoveryBackend
 import java.lang.reflect.Method
 import java.lang.reflect.Parameter
 import java.util.*
 
 
-open class ControllerVerticle : AbstractVerticle(){
+open class AbstractController : AbstractVerticle(){
 
     protected var logger: Logger
 
@@ -47,7 +53,7 @@ open class ControllerVerticle : AbstractVerticle(){
 
         templateEngine = AppDockerContext.sharedMap[appdockerHttpServerTemplate] as TemplateEngine
 
-        serviceDiscovery = AppDockerContext.sharedMap[appdockerServiceDiscovery] as ServiceDiscovery
+        serviceDiscovery = ServiceDiscovery.create(vertx)
 
         if (javaClass != StaticResourceController::class.java) {
             // process controller's relative path
@@ -73,20 +79,50 @@ open class ControllerVerticle : AbstractVerticle(){
                     createRoutPath(method).forEach loop@ {
                         routePath ->
 
+                        // create auth interceptor
+
+                        logger.info("invoke interceptor before method for handler ${this.javaClass.name}#${method.name}'s with route($routePath)")
+
+                        beforeCreateHandler(router!!,routePath,method)
+
+                        logger.info("invoke interceptor before method for handler ${this.javaClass.name}#${method.name}'s with route($routePath) -- success")
+
                         logger.info("register method ${this.javaClass.name}#${method.name} as http route($routePath) handler")
 
                         createRouteHandlers(routePath, httpMethodAnnotation, method)
 
                         logger.info("register method ${this.javaClass.name}#${method.name} as http route($routePath) handler -- success")
 
-                        val templateAnnotation = method.getAnnotation(Template::class.java)?:return@loop
+                        logger.info("invoke interceptor after method for handler ${this.javaClass.name}#${method.name}'s with route($routePath)")
 
-                        logger.info("register method ${this.javaClass.name}#${method.name}'s template handler for http route($routePath)")
-                        templateHandler(httpMethodAnnotation,templateAnnotation,routePath)
-                        logger.info("register method ${this.javaClass.name}#${method.name}'s template handler for http route($routePath) -- success")
+                        afterCreateHandler(router!!,routePath,method)
+
+                        logger.info("invoke interceptor after method for handler ${this.javaClass.name}#${method.name}'s with route($routePath) -- success")
                     }
                 }
     }
+
+    private fun getInterceptor(name :String) : HandlerInterceptor? {
+        val interceptors = ServiceLoader.load(HandlerInterceptor::class.java)
+
+        interceptors.forEach {
+            interceptor ->
+
+            if (interceptor.name() == name) {
+                return interceptor
+            }
+        }
+
+        return null
+    }
+
+    private fun beforeCreateHandler(router: Router, routePath: String, method: Method) {
+    }
+
+    private fun afterCreateHandler(router: Router, routePath: String, method: Method) {
+        getInterceptor(TemplateHandlerInterceptor::class.java.name)!!.after(config(), router,routePath,method)
+    }
+
 
     private fun createRoutPath(method: Method) :List<String> {
 
@@ -317,32 +353,6 @@ open class ControllerVerticle : AbstractVerticle(){
         }
 
         return routes
-    }
-
-    private fun templateHandler(httpMethodAnnotation: com.appdocker.web.annotations.Method?, templateAnnotation: Template, fullPath: String) {
-        if(templateEngine == null) {
-            throw IllegalArgumentException("require template engine for router :$javaClass")
-        }
-
-        val routes = createRoutes(fullPath, httpMethodAnnotation)
-
-        val templateFilePath = "${config().getString("template.root","template")}/${templateAnnotation.value}"
-
-        routes.forEach {
-            route ->
-
-            route.handler {
-                context ->
-
-                templateEngine!!.render(context, templateFilePath) { res ->
-                    if (res.succeeded()) {
-                        context.response().putHeader(HttpHeaders.CONTENT_TYPE, templateAnnotation.contentType).end(res.result())
-                    } else {
-                        context.fail(res.cause())
-                    }
-                }
-            }
-        }
     }
 
     private fun pathCombine(root:String,relative:String):String {

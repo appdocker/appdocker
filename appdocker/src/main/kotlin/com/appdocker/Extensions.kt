@@ -3,7 +3,7 @@ package com.appdocker
 import io.vertx.core.AsyncResult
 import io.vertx.core.Handler
 
-public fun <T> AsyncResult<T>.causeWithStackTrace():String {
+fun <T> AsyncResult<T>.causeWithStackTrace():String {
     val stream = StringBuilder()
 
     this.cause().stackTrace.forEach {
@@ -17,6 +17,10 @@ public fun <T> AsyncResult<T>.causeWithStackTrace():String {
 }
 
 fun <T> Handler(handler: (T) -> Unit): Handler<T> = Handler<T> { event -> handler(event) }
+
+val appdocker = "__appdocker"
+
+val appdockerConfig = "__appdocker_config"
 
 val appdockerServiceDiscovery = "__appdocker_service_discovery"
 
